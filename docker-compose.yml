@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    build: .
+    container_name: telegram-user-bot
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./group_images:/app/group_images
+    env_file:
+      - .env
+    command: python main.py
+    restart: unless-stopped
+
+  test-extractor:
+    build: .
+    container_name: test-temu-extractor-easyocr
+    volumes:
+      - ./group_images:/app/group_images
+    command: python test_temu_extractor_easyocr.py
+    depends_on:
+      - telegram-bot
