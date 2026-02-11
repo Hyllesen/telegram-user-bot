@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  setup-session:
+    build: .
+    container_name: telegram-session-setup
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./group_images:/app/group_images
+      - ./:/app  # Mount the whole directory to persist session file
+    env_file:
+      - .env
+    stdin_open: true  # equivalent to -i flag
+    tty: true         # equivalent to -t flag
+    command: python setup_session.py
+
   telegram-bot:
     build: .
     container_name: telegram-user-bot

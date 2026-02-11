@@ -23,6 +23,16 @@ TARGET_GROUP_CHAT_ID=your_target_group_chat_id
 
 ## Running with Docker
 
+### Setup Telegram Session (Required):
+
+Before running the main application, you need to authenticate and create a session file:
+
+```bash
+docker-compose run setup-session
+```
+
+This will prompt you for your phone number and the login code sent to your Telegram. Run this in an environment where you can interact with it.
+
 ### Build and run the main application:
 
 ```bash
@@ -48,6 +58,16 @@ docker-compose up
 ```bash
 pip install -r requirements.txt
 ```
+
+### Setup Telegram Session (Required):
+
+Before running the main application, you need to authenticate and create a session file:
+
+```bash
+python setup_session.py
+```
+
+This will prompt you for your phone number and the login code sent to your Telegram. Run this in an environment where you can interact with it.
 
 ### Run the main application:
 

@@ -119,13 +119,22 @@ class TelegramGroupMonitor:
     async def start(self):
         """Start the Telegram client and begin listening for messages"""
         # Connect and authorize the client
-        await self.client.connect()
-        
-        if not await self.client.is_user_authorized():
-            await self.client.start()
-        
-        if not await self.client.is_user_authorized():
-            raise Exception("User authorization failed. Please check your credentials.")
+        try:
+            await self.client.connect()
+            
+            if not await self.client.is_user_authorized():
+                print("Session is not authorized. Please make sure you have a valid session.")
+                print("If this is the first time running the bot, you'll need to authenticate manually.")
+                print("Run this script in an environment where you can enter the login code when prompted.")
+                await self.client.start()
+            
+            if not await self.client.is_user_authorized():
+                raise Exception("User authorization failed. Please check your credentials.")
+        except Exception as e:
+            print(f"Error during initial connection: {e}")
+            print("Attempting to reconnect with fresh session...")
+            if not await self.reconnect():
+                raise Exception("Could not establish connection after multiple attempts.")
 
         # Debug: List all dialogs to see accessible chats
         print("Fetching all accessible chats...")
