@@ -1,6 +1,7 @@
 import os
 import asyncio
 import re
+import json
 from telethon import TelegramClient, events
 from telethon.errors import TypeNotFoundError, FloodWaitError, AuthKeyError
 from dotenv import load_dotenv
@@ -18,11 +19,18 @@ class TelegramGroupMonitor:
         # Get credentials from environment variables
         api_id = os.getenv('API_ID')
         api_hash = os.getenv('API_HASH')
-        self.target_group_identifier = os.getenv('TARGET_GROUP_CHAT_ID')
         self.target_username = '@imelda87541'  # Target user to send matching images
 
-        if not api_id or not api_hash or not self.target_group_identifier:
-            raise ValueError("Missing required environment variables: API_ID, API_HASH, or TARGET_GROUP_CHAT_ID")
+        # Load the selected group from storage (mandatory)
+        selected_group_id = self.load_selected_group()
+        if selected_group_id is None:
+            raise ValueError("No group selected. Please run 'python main.py --select-group' to select a group to monitor first.")
+
+        self.target_group_identifier = str(selected_group_id)
+        print(f"Using selected group ID from storage: {selected_group_id}")
+
+        if not api_id or not api_hash:
+            raise ValueError("Missing required environment variables: API_ID or API_HASH")
 
         # Convert to integer if it's a numeric string, otherwise keep as string
         try:
@@ -62,6 +70,19 @@ class TelegramGroupMonitor:
 
         # Initialize the keyword extractor
         self.keyword_extractor = TemuKeywordExtractor()
+
+    def load_selected_group(self):
+        """Load the selected group ID from the persistent file"""
+        try:
+            selected_group_file = Path("selected_group.json")
+            if selected_group_file.exists():
+                with selected_group_file.open('r') as f:
+                    data = json.load(f)
+                    return data.get('group_id')
+            return None
+        except Exception as e:
+            print(f"Error loading selected group: {e}")
+            return None
 
     async def is_connected(self):
         """Check if the client is connected to Telegram"""

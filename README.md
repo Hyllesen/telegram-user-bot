@@ -10,8 +10,9 @@ Before running the application, you need to set up your Telegram API credentials
 ```
 API_ID=your_telegram_api_id
 API_HASH=your_telegram_api_hash
-TARGET_GROUP_CHAT_ID=your_target_group_chat_id
 ```
+
+Note: You must run the interactive group selection once before running the main bot. The TARGET_GROUP_CHAT_ID is no longer used from the .env file.
 
 ## Features
 
@@ -32,6 +33,16 @@ docker-compose run setup-session
 ```
 
 This will prompt you for your phone number and the login code sent to your Telegram. Run this in an environment where you can interact with it.
+
+### Select Target Group (Optional but Recommended):
+
+Instead of hardcoding the TARGET_GROUP_CHAT_ID in your .env file, you can interactively select which group to monitor:
+
+```bash
+docker-compose run telegram-bot python main.py --select-group
+```
+
+This will connect to your Telegram account, list all accessible groups/channels, and allow you to select one to monitor. The selection will be saved and remembered for future runs.
 
 ### Build and run the main application:
 
@@ -69,6 +80,16 @@ python setup_session.py
 
 This will prompt you for your phone number and the login code sent to your Telegram. Run this in an environment where you can interact with it.
 
+### Select Target Group (Optional but Recommended):
+
+Instead of hardcoding the TARGET_GROUP_CHAT_ID in your .env file, you can interactively select which group to monitor:
+
+```bash
+python main.py --select-group
+```
+
+This will connect to your Telegram account, list all accessible groups/channels, and allow you to select one to monitor. The selection will be saved and remembered for future runs.
+
 ### Run the main application:
 
 ```bash
@@ -104,3 +125,4 @@ Main Telegram client that monitors groups, downloads images, and processes both 
 - The OCR functionality uses EasyOCR to extract store names from images
 - The keyword extraction functionality scrapes meta tags from Temu share URLs
 - Make sure your `.env` file is properly configured before running the application
+- You must run `python main.py --select-group` once to select which group to monitor before running the main application
