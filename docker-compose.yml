@@ -14,12 +14,26 @@ services:
     tty: true         # equivalent to -t flag
     command: python setup_session.py
 
+  select-group:
+    build: .
+    container_name: telegram-select-group
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./group_images:/app/group_images
+      - ./:/app  # Mount the whole directory to persist selected group file
+    env_file:
+      - .env
+    stdin_open: true  # equivalent to -i flag
+    tty: true         # equivalent to -t flag
+    command: python main.py --select-group
+
   telegram-bot:
     build: .
     container_name: telegram-user-bot
     volumes:
       - ./.env:/app/.env:ro
       - ./group_images:/app/group_images
+      - ./:/app  # Mount the whole directory to persist selected group file
     env_file:
       - .env
     command: python main.py
